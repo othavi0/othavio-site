@@ -77,7 +77,7 @@ function Toggle({
             onClick={() => onSelect(option.value)}
             aria-pressed={active === option.value}
             className={cn(
-              "transition-colors",
+              "inline-flex min-h-11 min-w-11 items-center justify-center transition-colors",
               active === option.value
                 ? "text-foreground"
                 : "text-muted-foreground hover:text-foreground"

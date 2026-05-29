@@ -18,7 +18,7 @@ type Copy = {
 export const content: Record<Lang, Copy> = {
   en: {
     identity:
-      "Fullstack engineer crafting open source tools for developers and the agents they work alongside.",
+      "Builds terminal-native tools for developers coordinating AI agents, from Waybar telemetry to Rust token-saving CLIs.",
     sectionOpenSource: "/* OPEN SOURCE */",
     sectionWork: "/* WORK */",
     sectionElsewhere: "/* ELSEWHERE */",
@@ -33,7 +33,7 @@ export const content: Record<Lang, Copy> = {
   },
   pt: {
     identity:
-      "Engenheiro fullstack criando ferramentas open source para desenvolvedores e os agentes ao lado deles.",
+      "Cria ferramentas de terminal para devs que coordenam agentes de IA, de telemetria no Waybar a CLIs em Rust que economizam tokens.",
     sectionOpenSource: "/* OPEN SOURCE */",
     sectionWork: "/* TRABALHO */",
     sectionElsewhere: "/* EM OUTROS LUGARES */",

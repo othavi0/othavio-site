@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 })
 
 const description =
-  "Fullstack engineer crafting open source tools for developers and the agents they work alongside."
+  "Terminal-native tools for developers coordinating AI agents, from Waybar telemetry to Rust token-saving CLIs."
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://othavio.com"),

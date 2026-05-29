@@ -15,14 +15,14 @@ export default function NotFound() {
       </p>
       <Link
         href="/"
-        className="group inline-flex w-fit items-baseline gap-3 text-foreground"
+        className="group inline-flex min-h-11 w-fit items-center gap-3 text-foreground"
       >
         <span className="decoration-accent decoration-2 underline-offset-4 group-hover:underline group-focus-visible:underline">
           {copy.notFoundLink}
         </span>
         <span
           aria-hidden
-          className="text-muted-foreground transition-[transform,color] duration-200 ease-out group-hover:translate-x-1 group-hover:text-accent"
+          className="text-muted-foreground transition-[transform,color] duration-200 ease-out group-hover:translate-x-1 group-hover:text-accent group-focus-visible:translate-x-1 group-focus-visible:text-accent"
         >
           →
         </span>

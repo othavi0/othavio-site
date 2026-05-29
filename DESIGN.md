@@ -19,7 +19,7 @@ cold graphite.
 | --------------- | -------------------- | ---------------------------- | -------------------------------------- |
 | Background      | `--background`       | `oklch(0.14 0.008 60)`       | warm near-black                        |
 | Foreground      | `--foreground`       | `oklch(0.94 0.015 80)`       | bone, never white                      |
-| Muted           | `--muted-foreground` | `oklch(0.52 0.010 75)`       | marginalia, numbers, dates             |
+| Muted           | `--muted-foreground` | `oklch(0.58 0.010 75)`       | marginalia, numbers, dates             |
 | Border hairline | `--border`           | `oklch(0.94 0.015 80 / 12%)` | dividers only                          |
 | Accent          | `--accent`           | `oklch(0.68 0.20 35)`        | vermillion, link hover + active toggle |
 | Focus ring      | `--ring`             | `oklch(0.68 0.20 35 / 70%)`  | accent at lower alpha                  |

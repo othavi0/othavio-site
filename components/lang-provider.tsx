@@ -27,6 +27,10 @@ export function LangProvider({ children }: { children: React.ReactNode }) {
     setLangState(detectInitial())
   }, [])
 
+  React.useEffect(() => {
+    document.documentElement.lang = lang
+  }, [lang])
+
   const setLang = React.useCallback((next: Lang) => {
     setLangState(next)
     try {

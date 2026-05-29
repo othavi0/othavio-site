@@ -26,7 +26,7 @@ export default async function OpengraphImage() {
             fontSize: 18,
             letterSpacing: "0.28em",
             textTransform: "uppercase",
-            color: "oklch(0.52 0.010 75)",
+            color: "oklch(0.58 0.010 75)",
           }}
         >
           ※ othavio.com
@@ -56,8 +56,8 @@ export default async function OpengraphImage() {
             lineHeight: 1.4,
           }}
         >
-          Fullstack engineer crafting open source tools for developers and the
-          agents they work alongside.
+          Terminal-native tools for developers coordinating AI agents, from Waybar
+          telemetry to Rust token-saving CLIs.
         </div>
       </div>
     ),

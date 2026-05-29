@@ -59,11 +59,15 @@ export default function HomePage() {
         style={{ animationDelay: "280ms" }}
       >
         <SectionLabel>{copy.sectionWork}</SectionLabel>
-        <dl className="mt-6 grid grid-cols-[minmax(7rem,9rem)_1fr] gap-y-3 text-sm">
+        <dl className="mt-6 grid grid-cols-1 gap-x-4 gap-y-2 text-sm sm:grid-cols-[minmax(7rem,9rem)_minmax(0,1fr)] sm:gap-y-3">
           <dt className="text-muted-foreground">{copy.workCurrentlyLabel}</dt>
-          <dd className="text-foreground">→ {copy.workCurrently}</dd>
+          <dd className="min-w-0 [overflow-wrap:anywhere] text-foreground">
+            → {copy.workCurrently}
+          </dd>
           <dt className="text-muted-foreground">{copy.workPreviouslyLabel}</dt>
-          <dd className="text-foreground">→ {copy.workPreviously}</dd>
+          <dd className="min-w-0 [overflow-wrap:anywhere] text-foreground">
+            → {copy.workPreviously}
+          </dd>
         </dl>
       </section>
 
@@ -79,9 +83,9 @@ export default function HomePage() {
                 href={link.href}
                 target="_blank"
                 rel="noreferrer"
-                className="group inline-flex items-baseline gap-3 text-foreground"
+                className="group inline-flex min-h-11 max-w-full items-center gap-3 text-foreground"
               >
-                <span className="decoration-accent decoration-2 underline-offset-4 group-hover:underline group-focus-visible:underline">
+                <span className="min-w-0 [overflow-wrap:anywhere] decoration-accent decoration-2 underline-offset-4 group-hover:underline group-focus-visible:underline">
                   {link.label}
                 </span>
                 <span
