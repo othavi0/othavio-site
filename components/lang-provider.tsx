@@ -17,8 +17,7 @@ function detectInitial(): Lang {
   if (typeof window === "undefined") return "en"
   const stored = window.localStorage.getItem(STORAGE_KEY)
   if (stored === "en" || stored === "pt") return stored
-  const nav = window.navigator.language?.toLowerCase() ?? ""
-  return nav.startsWith("pt") ? "pt" : "en"
+  return "en"
 }
 
 export function LangProvider({ children }: { children: React.ReactNode }) {

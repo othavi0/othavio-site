@@ -4,7 +4,6 @@ import { useLang } from "@/components/lang-provider"
 import { MetaBar } from "@/components/meta-bar"
 import { ProjectRow } from "@/components/project-row"
 import { SectionLabel } from "@/components/section-label"
-import { SiteFooter } from "@/components/site-footer"
 import { Wordmark } from "@/components/wordmark"
 import { content } from "@/lib/content"
 import { elsewhere, projects } from "@/lib/projects"
@@ -22,15 +21,16 @@ export default function HomePage() {
       <MetaBar />
 
       <div className="mt-[clamp(4rem,12vh,8rem)]">
-        <Wordmark
-          lines={["OTHAVIO", "QUILIAO"]}
-          marginalia={[copy.marginCity, copy.marginEst]}
-        />
+        <Wordmark lines={["OTHAVIO", "QUILIAO"]} />
       </div>
 
       <p
         className="reveal-up mt-[clamp(2rem,5vh,3rem)] max-w-[65ch] text-foreground"
-        style={{ animationDelay: "120ms", fontSize: "clamp(1rem, 1.6vw, 1.35rem)", lineHeight: 1.55 }}
+        style={{
+          animationDelay: "120ms",
+          fontSize: "clamp(1rem, 1.6vw, 1.35rem)",
+          lineHeight: 1.55,
+        }}
       >
         {copy.identity}
       </p>
@@ -95,10 +95,6 @@ export default function HomePage() {
           ))}
         </ul>
       </section>
-
-      <div className="mt-auto pt-[clamp(3rem,8vh,5rem)]">
-        <SiteFooter />
-      </div>
     </main>
   )
 }

@@ -4,7 +4,6 @@ import * as React from "react"
 import { useTheme } from "next-themes"
 
 import { useLang } from "@/components/lang-provider"
-import { content } from "@/lib/content"
 import { cn } from "@/lib/utils"
 
 const META_CLASS =
@@ -19,14 +18,20 @@ export function MetaBar() {
     setMounted(true)
   }, [])
 
-  const activeTheme = mounted ? (resolvedTheme === "dark" ? "dark" : "light") : null
-  const copy = content[lang]
+  const activeTheme = mounted
+    ? resolvedTheme === "dark"
+      ? "dark"
+      : "light"
+    : null
 
   return (
-    <header className={cn(META_CLASS, "flex flex-wrap items-center gap-x-6 gap-y-2")}>
-      <span className="text-foreground">※ othavio.com</span>
-
-      <div className="ml-auto flex flex-wrap items-center gap-x-6 gap-y-2">
+    <header
+      className={cn(
+        META_CLASS,
+        "flex flex-wrap items-center justify-end gap-x-6 gap-y-2"
+      )}
+    >
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
         <Toggle
           label="language"
           options={[
@@ -45,9 +50,6 @@ export function MetaBar() {
           active={activeTheme}
           onSelect={(v) => setTheme(v)}
         />
-        <span aria-hidden className="hidden sm:inline">
-          {copy.themeHint}
-        </span>
       </div>
     </header>
   )

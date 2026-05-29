@@ -11,10 +11,6 @@ type Copy = {
   workCurrently: string
   workPreviouslyLabel: string
   workPreviously: string
-  marginCity: string
-  marginEst: string
-  themeHint: string
-  footer: string
   notFound: string
   notFoundLink: string
 }
@@ -29,13 +25,9 @@ export const content: Record<Lang, Copy> = {
     roleAuthor: "author",
     roleContributor: "contributor",
     workCurrentlyLabel: "Currently",
-    workCurrently: "Noctua Core, building developer tooling.",
+    workCurrently: "Full Stack Developer at Profills and Noctua Core.",
     workPreviouslyLabel: "Previously",
     workPreviously: "Himarte Net  ·  InfinityBase",
-    marginCity: "/* curitiba, br */",
-    marginEst: "/* est. 2023 */",
-    themeHint: "press d to toggle theme",
-    footer: "© 2026 · built in neovim · deployed on vercel",
     notFound: "/* not found */",
     notFoundLink: "back to /",
   },
@@ -48,13 +40,9 @@ export const content: Record<Lang, Copy> = {
     roleAuthor: "autor",
     roleContributor: "contribuidor",
     workCurrentlyLabel: "Atualmente",
-    workCurrently: "Noctua Core, construindo ferramentas para desenvolvedores.",
+    workCurrently: "Desenvolvedor full stack na Profills e Noctua Core.",
     workPreviouslyLabel: "Anteriormente",
     workPreviously: "Himarte Net  ·  InfinityBase",
-    marginCity: "/* curitiba, br */",
-    marginEst: "/* est. 2023 */",
-    themeHint: "aperte d para trocar tema",
-    footer: "© 2026 · feito no neovim · em produção na vercel",
     notFound: "/* não encontrado */",
     notFoundLink: "voltar para /",
   },

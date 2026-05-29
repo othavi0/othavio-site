@@ -15,25 +15,25 @@ cold graphite.
 
 ### Dark (default)
 
-| Role | Token | Value | Notes |
-|---|---|---|---|
-| Background | `--background` | `oklch(0.14 0.008 60)` | warm near-black |
-| Foreground | `--foreground` | `oklch(0.94 0.015 80)` | bone, never white |
-| Muted | `--muted-foreground` | `oklch(0.52 0.010 75)` | marginalia, numbers, dates |
-| Border hairline | `--border` | `oklch(0.94 0.015 80 / 12%)` | dividers only |
-| Accent | `--accent` | `oklch(0.68 0.20 35)` | vermillion, link hover + active toggle |
-| Focus ring | `--ring` | `oklch(0.68 0.20 35 / 70%)` | accent at lower alpha |
+| Role            | Token                | Value                        | Notes                                  |
+| --------------- | -------------------- | ---------------------------- | -------------------------------------- |
+| Background      | `--background`       | `oklch(0.14 0.008 60)`       | warm near-black                        |
+| Foreground      | `--foreground`       | `oklch(0.94 0.015 80)`       | bone, never white                      |
+| Muted           | `--muted-foreground` | `oklch(0.52 0.010 75)`       | marginalia, numbers, dates             |
+| Border hairline | `--border`           | `oklch(0.94 0.015 80 / 12%)` | dividers only                          |
+| Accent          | `--accent`           | `oklch(0.68 0.20 35)`        | vermillion, link hover + active toggle |
+| Focus ring      | `--ring`             | `oklch(0.68 0.20 35 / 70%)`  | accent at lower alpha                  |
 
 ### Light
 
-| Role | Token | Value | Notes |
-|---|---|---|---|
-| Background | `--background` | `oklch(0.97 0.008 85)` | paper |
-| Foreground | `--foreground` | `oklch(0.18 0.010 60)` | ink |
-| Muted | `--muted-foreground` | `oklch(0.50 0.010 75)` | marginalia |
-| Border hairline | `--border` | `oklch(0.18 0.010 60 / 14%)` | dividers only |
-| Accent | `--accent` | `oklch(0.55 0.21 32)` | vermillion, slightly darker for paper |
-| Focus ring | `--ring` | `oklch(0.55 0.21 32 / 70%)` | accent at lower alpha |
+| Role            | Token                | Value                        | Notes                                 |
+| --------------- | -------------------- | ---------------------------- | ------------------------------------- |
+| Background      | `--background`       | `oklch(0.97 0.008 85)`       | paper                                 |
+| Foreground      | `--foreground`       | `oklch(0.18 0.010 60)`       | ink                                   |
+| Muted           | `--muted-foreground` | `oklch(0.50 0.010 75)`       | marginalia                            |
+| Border hairline | `--border`           | `oklch(0.18 0.010 60 / 14%)` | dividers only                         |
+| Accent          | `--accent`           | `oklch(0.55 0.21 32)`        | vermillion, slightly darker for paper |
+| Focus ring      | `--ring`             | `oklch(0.55 0.21 32 / 70%)`  | accent at lower alpha                 |
 
 ### Color usage rules
 
@@ -50,15 +50,15 @@ cold graphite.
 One typeface: **Geist Mono** (already loaded). All hierarchy comes from scale,
 weight, and tracking. No serif, no display sans, no second font.
 
-| Role | Size | Weight | Tracking | Leading |
-|---|---|---|---|---|
-| Wordmark | `clamp(4rem, 14vw, 11rem)` | 800 | `-0.06em` | `0.82` |
-| Identity sentence | `clamp(1rem, 1.6vw, 1.35rem)` | 400 | normal | `1.55` |
-| Project name | `1rem` | 600 | normal | `1.4` |
-| Project description | `0.875rem` | 400 | normal | `1.5` |
-| Section label `/* ... */` | `0.7rem` UPPERCASE | 500 | `+0.24em` | `1.4` |
-| Marginalia (numbers, dates, comments) | `0.7rem` | 400 | `+0.06em` | `1.4` |
-| Meta bar / footer | `0.65rem` UPPERCASE | 500 | `+0.28em` | `1.4` |
+| Role                                  | Size                          | Weight | Tracking  | Leading |
+| ------------------------------------- | ----------------------------- | ------ | --------- | ------- |
+| Wordmark                              | `clamp(4rem, 14vw, 11rem)`    | 800    | `-0.06em` | `0.82`  |
+| Identity sentence                     | `clamp(1rem, 1.6vw, 1.35rem)` | 400    | normal    | `1.55`  |
+| Project name                          | `1rem`                        | 600    | normal    | `1.4`   |
+| Project description                   | `0.875rem`                    | 400    | normal    | `1.5`   |
+| Section label `/* ... */`             | `0.7rem` UPPERCASE            | 500    | `+0.24em` | `1.4`   |
+| Marginalia (numbers, dates, comments) | `0.7rem`                      | 400    | `+0.06em` | `1.4`   |
+| Meta bar                              | `0.65rem` UPPERCASE           | 500    | `+0.28em` | `1.4`   |
 
 ### Typography rules
 
@@ -77,16 +77,15 @@ Vertical rhythm uses a `--space` scale tied to type. Sections are separated by
 hairline rules (`border-top: 1px solid var(--border)`) with `padding-block`
 varying by section weight — not equal everywhere.
 
-| Region | Top space | Bottom space |
-|---|---|---|
-| Meta bar | `1rem` | `clamp(4rem, 12vh, 8rem)` |
-| Wordmark block | 0 | `clamp(2rem, 5vh, 3rem)` |
-| Identity sentence | 0 | `clamp(4rem, 10vh, 6rem)` |
-| Section (Open source / Work / Elsewhere) | `clamp(2rem, 5vh, 3rem)` | `clamp(3rem, 7vh, 4rem)` |
-| Footer | `clamp(3rem, 8vh, 5rem)` | `2rem` |
+| Region                                   | Top space                | Bottom space              |
+| ---------------------------------------- | ------------------------ | ------------------------- |
+| Meta bar                                 | `1rem`                   | `clamp(4rem, 12vh, 8rem)` |
+| Wordmark block                           | 0                        | `clamp(2rem, 5vh, 3rem)`  |
+| Identity sentence                        | 0                        | `clamp(4rem, 10vh, 6rem)` |
+| Section (Open source / Work / Elsewhere) | `clamp(2rem, 5vh, 3rem)` | `clamp(3rem, 7vh, 4rem)`  |
 
-Marginalia (`/* curitiba, br */`, `/* est. 2023 */`, `2026 →`) sits aligned
-right inside the same row as its anchor, never floated absolute.
+Marginalia appears only where it adds meaning, such as `2026 →` in a section
+label. The wordmark has no side comments.
 
 ## Components
 
@@ -97,20 +96,17 @@ Each is a single small file under `components/`. No prop explosion.
 Top row, `0.65rem` UPPERCASE.
 
 ```
-※ othavio.com       PT · EN     DARK · LIGHT    d toggles theme
+EN · PT     DARK · LIGHT
 ```
 
-- Left: site mark (`※ othavio.com`).
-- Middle-right: PT/EN toggle. Active token = `--foreground`. Separator `·`
+- Right-aligned EN/PT toggle. Active token = `--foreground`. Separator `·`
   = `--muted-foreground`.
 - Right: DARK/LIGHT toggle. Same pattern.
-- Far right: hint `d toggles theme`, in `--muted-foreground`.
 - Collapses on narrow screens to two rows, keeping the same hierarchy.
 
 ### `Wordmark` (server)
 
-`<h1>` rendered as two `<span>` lines with marginalia on the right of each
-line on `md+`, below the wordmark on mobile.
+`<h1>` rendered as two `<span>` lines. No marginalia beside the wordmark.
 
 ### `ProjectRow` (server)
 
@@ -125,16 +121,11 @@ gains `--accent`. 200ms `cubic-bezier(0.22, 1, 0.36, 1)` (ease-out-quart).
 `<h2>` styled as `/* OPEN SOURCE */`. Includes an optional right slot for a
 marginalia value (`2026 →`).
 
-### `SiteFooter` (server)
-
-Single line: `© 2026 · built in neovim · deployed on vercel`.
-
 ### `LangProvider` (client)
 
-React context exposing `{ lang, setLang }`. Reads `navigator.language` on
-mount, falls back to `en`, persists to `localStorage` under `lang`. SSR
-renders `en`; the provider corrects on hydration without flash because the
-copy is text-only (no layout shift).
+React context exposing `{ lang, setLang }`. Defaults to `en`, then reads any
+previous explicit user choice from `localStorage` under `lang`. Browser locale
+does not override the default. SSR renders `en`.
 
 ## Motion
 
@@ -174,8 +165,7 @@ Repeated from PRODUCT.md for enforcement at the design layer:
 - `app/icon.svg` — `※` glyph for favicon.
 - `app/opengraph-image.tsx` — OG image, same typography.
 - `components/meta-bar.tsx`, `wordmark.tsx`, `project-row.tsx`,
-  `section-label.tsx`, `site-footer.tsx`, `lang-provider.tsx`,
-  `theme-provider.tsx`.
+  `section-label.tsx`, `lang-provider.tsx`, `theme-provider.tsx`.
 - `lib/content.ts` — `{ pt, en }` strings for all bilingual copy.
 - `lib/projects.ts` — 5-item array with bilingual descriptions.
 - `lib/utils.ts` — `cn()`. Unchanged.
