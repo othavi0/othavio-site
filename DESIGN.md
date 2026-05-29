@@ -38,12 +38,29 @@ cold graphite.
 ### Color usage rules
 
 - Body text is `--foreground`.
-- Marginalia (`01`, `02`, `2026`, `/* labels */`, footer) is `--muted-foreground`.
+- Marginalia (`01`, `02`, `/* labels */` text) is `--muted-foreground`. The
+  trailing slot of a section label (`2026 →`) is the exception and uses
+  `--accent`, because it tags the section as live in the current year.
 - Links are `--foreground` at rest, gain underline + `--accent` on hover/focus.
 - The active item in PT/EN and DARK/LIGHT toggles is `--foreground`; inactive
   is `--muted-foreground`. The accent does NOT carry the active state.
-- The accent appears in: link hover/focus underline, active focus ring, and
-  the `→` arrow on a hovered project row. Nowhere else.
+
+The accent appears in exactly these surfaces:
+
+1. `::selection` background.
+2. Focus ring on links and buttons.
+3. The `.underline-sweep` bar under a project name on hover / focus / tap.
+4. The `→` arrow at the end of a project row on hover / focus / tap.
+5. The trailing slot of a section label (`2026 →`).
+6. The leading `→` markers on the WORK section's "Currently" / "Previously"
+   rows (always-on; they signal the row, like a bullet would).
+7. The `.scroll-progress` hairline at the top edge of the viewport.
+8. The number (`01`...`05`) on the **active project row** — the row whose
+   vertical center is closest to the viewport center. Migrates as you scroll;
+   on mobile this replaces the hover affordance.
+
+Separators (`·`) and section-label text stay muted. Numbers stay muted
+unless their row is the active one.
 
 ## Typography
 
@@ -111,10 +128,24 @@ EN · PT     DARK · LIGHT
 ### `ProjectRow` (server)
 
 Row layout: `[number] [name + description stacked] [arrow]`. `display: grid`
-with `grid-template-columns: 3rem 1fr auto`. Anchor wraps the whole row.
+with `grid-template-columns: 3rem 1fr auto`. Anchor wraps the whole row and
+carries `data-active-row` so the scroll orchestrator can flag it as "active"
+(see Motion below).
 
-Hover: name underline appears in `--accent`; arrow translates `4px` right and
-gains `--accent`. 200ms `cubic-bezier(0.22, 1, 0.36, 1)` (ease-out-quart).
+Interaction states (`:hover`, `:focus-visible`, `:active`/tap all fire the
+same effect, so touch devices get the same affordance):
+
+- A 2px `--accent` bar sweeps left to right under the name (`scaleX 0→1`,
+  240ms ease-out-quart, `.underline-sweep` utility) — replaces the previous
+  instant `text-decoration: underline`.
+- The description text lifts from `--muted-foreground` to `--foreground`
+  (200ms ease-out).
+- The arrow translates `6px` right and gains `--accent` (220ms ease-out-quart).
+
+When the row is the **active** one (closest to viewport center), the number
+(`.row-number`) transitions from `--muted-foreground` to `--accent` over
+280ms ease-out-quart. The underline / arrow / description stay in their rest
+state — the number alone marks "current" so it doesn't compete with hover.
 
 ### `SectionLabel` (server)
 
@@ -129,11 +160,35 @@ does not override the default. SSR renders `en`.
 
 ## Motion
 
-- Load: wordmark fades+lifts `4px` over 600ms ease-out-quart. Content blocks
-  below stagger by 80ms each over 800ms total.
-- Project row arrow: 200ms slide + color on hover.
-- Toggles: no animation; instantaneous swap.
-- All motion is suppressed under `prefers-reduced-motion: reduce`.
+- Load: the wordmark's two lines reveal via `clip-path: inset(0 0 100% 0 → 0)`
+  plus an 8px lift, 880ms ease-out-expo, second line delayed 140ms. Content
+  blocks below stagger by 80ms over 760ms ease-out-expo (`reveal-up` utility).
+- Project row: see `ProjectRow` above.
+- Theme switch: `body` transitions `background-color` and `color` over 220ms
+  ease-out-quart, so dark↔light swaps cross-fade instead of flashing.
+- Toggles: no animation on the toggle UI itself; the active label swaps
+  instantly. Only the page colors animate.
+- Scroll: `<ScrollOrchestrator />` is the page's single scroll subscription.
+  From one rAF loop plus one `IntersectionObserver` it:
+  - Publishes `--scroll-y` (px) and `--scroll-progress` (0..1) on `<html>`.
+  - Drives the wordmark parallax: `transform: translate3d(0, calc(var(--scroll-y)
+    * -0.08), 0)` on the `<h1>` via `.parallax-wordmark`. 8% is deliberate;
+    anything more reads as marketing scroll-jacking.
+  - Drives the top-edge `.scroll-progress` hairline via `transform: scaleX(...)`.
+  - Tags the `data-active-row` element whose vertical center is closest to the
+    viewport center with `data-active="true"`, lighting its number in accent
+    (see `ProjectRow`). Updates every animation frame the user scrolls; one
+    DOM attribute swap per change, no layout thrash.
+  - Reveals every `[data-reveal]` element on first intersect (`rootMargin: 0px
+    0px -12% 0px`), adding `data-in-view="true"`; CSS transitions
+    `opacity 0→1` and `translateY 14px→0` over 700ms ease-out-expo, with
+    per-element stagger via `--reveal-delay` (60ms per project row). The
+    observer unsubscribes after first hit; reveal is one-shot.
+- All motion is suppressed under `prefers-reduced-motion: reduce`, including
+  the wordmark clip-path, `reveal-up`, the underline sweep, the body color
+  transition, and the wordmark parallax. The scroll-progress hairline keeps
+  tracking (it's an indicator that responds to user input, not decorative
+  motion).
 
 ## Focus and accessibility
 
@@ -166,6 +221,10 @@ Repeated from PRODUCT.md for enforcement at the design layer:
 - `app/opengraph-image.tsx` — OG image, same typography.
 - `components/meta-bar.tsx`, `wordmark.tsx`, `project-row.tsx`,
   `section-label.tsx`, `lang-provider.tsx`, `theme-provider.tsx`.
+- `components/console-signature.tsx` — inline `<head>` script, prints three
+  `/* */` lines to the devtools console for visiting developers; no UI.
+- `components/scroll-orchestrator.tsx` — publishes `--scroll-y` and
+  `--scroll-progress` on `<html>` and renders the top-edge accent hairline.
 - `lib/content.ts` — `{ pt, en }` strings for all bilingual copy.
 - `lib/projects.ts` — 5-item array with bilingual descriptions.
 - `lib/utils.ts` — `cn()`. Unchanged.

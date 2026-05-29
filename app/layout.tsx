@@ -3,7 +3,9 @@ import { Geist_Mono } from "next/font/google"
 
 import "./globals.css"
 
+import { ConsoleSignature } from "@/components/console-signature"
 import { LangProvider } from "@/components/lang-provider"
+import { ScrollOrchestrator } from "@/components/scroll-orchestrator"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
 
@@ -46,9 +48,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className={cn(geistMono.variable)}>
+      <head>
+        <ConsoleSignature />
+      </head>
       <body className="antialiased">
         <ThemeProvider>
-          <LangProvider>{children}</LangProvider>
+          <LangProvider>
+            <ScrollOrchestrator />
+            {children}
+          </LangProvider>
         </ThemeProvider>
       </body>
     </html>

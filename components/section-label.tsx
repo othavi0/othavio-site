@@ -17,7 +17,11 @@ export function SectionLabel({ children, trailing, className }: SectionLabelProp
       )}
     >
       <span>{children}</span>
-      {trailing ? <span aria-hidden>{trailing}</span> : null}
+      {trailing ? (
+        <span aria-hidden className="text-accent">
+          {trailing}
+        </span>
+      ) : null}
     </h2>
   )
 }

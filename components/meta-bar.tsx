@@ -28,10 +28,10 @@ export function MetaBar() {
     <header
       className={cn(
         META_CLASS,
-        "flex flex-wrap items-center justify-end gap-x-6 gap-y-2"
+        "flex flex-wrap items-center justify-center gap-x-6 gap-y-2 sm:justify-end"
       )}
     >
-      <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 sm:justify-end">
         <Toggle
           label="language"
           options={[

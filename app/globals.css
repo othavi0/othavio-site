@@ -21,6 +21,10 @@
     --border: oklch(0.18 0.010 60 / 14%);
     --accent: oklch(0.55 0.21 32);
     --ring: oklch(0.55 0.21 32 / 70%);
+
+    /* Scroll state, updated by <ScrollOrchestrator />. */
+    --scroll-y: 0px;
+    --scroll-progress: 0;
 }
 
 .dark {
@@ -48,6 +52,9 @@
     body {
         background-color: var(--background);
         color: var(--foreground);
+        transition:
+            background-color 220ms cubic-bezier(0.22, 1, 0.36, 1),
+            color 220ms cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     ::selection {
@@ -70,14 +77,84 @@
 
 @layer utilities {
     .reveal-up {
-        animation: reveal-up 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+        animation: reveal-up 760ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .wordmark-line {
+        display: block;
+        clip-path: inset(0 0 100% 0);
+        animation: wordmark-clip 880ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        will-change: clip-path, transform;
+    }
+
+    .underline-sweep {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -2px;
+        height: 2px;
+        background-color: var(--accent);
+        transform: scaleX(0);
+        transform-origin: left center;
+        transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .group:hover .underline-sweep,
+    .group:focus-visible .underline-sweep,
+    .group:active .underline-sweep {
+        transform: scaleX(1);
+    }
+
+    /* Reveal-on-view: starts hidden, transitions in when the orchestrator
+       adds data-in-view. Per-element stagger via --reveal-delay. */
+    [data-reveal] {
+        opacity: 0;
+        transform: translateY(14px);
+        transition:
+            opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+            transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+        transition-delay: var(--reveal-delay, 0ms);
+        will-change: opacity, transform;
+    }
+
+    [data-reveal][data-in-view="true"] {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Active row: the row closest to viewport center. Its number lights up
+       in accent, the underline sweep stays subtle (50%) so the eye knows the
+       row is "current" without it competing with hover/tap states. */
+    .row-number {
+        transition: color 280ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    [data-active-row][data-active="true"] .row-number {
+        color: var(--accent);
+    }
+
+    .scroll-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background-color: var(--accent);
+        transform: scaleX(var(--scroll-progress, 0));
+        transform-origin: left center;
+        z-index: 50;
+        pointer-events: none;
+    }
+
+    .parallax-wordmark {
+        transform: translate3d(0, calc(var(--scroll-y, 0px) * -0.08), 0);
     }
 }
 
 @keyframes reveal-up {
     from {
         opacity: 0;
-        transform: translateY(6px);
+        transform: translateY(10px);
     }
     to {
         opacity: 1;
@@ -85,9 +162,45 @@
     }
 }
 
+@keyframes wordmark-clip {
+    from {
+        clip-path: inset(0 0 100% 0);
+        transform: translateY(8px);
+    }
+    to {
+        clip-path: inset(0 0 0 0);
+        transform: translateY(0);
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
-    .reveal-up {
+    .reveal-up,
+    .wordmark-line {
         animation: none;
+        clip-path: none;
+        transform: none;
+    }
+
+    .parallax-wordmark {
+        transform: none;
+    }
+
+    .underline-sweep {
+        transition: none;
+    }
+
+    [data-reveal] {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
+    .row-number {
+        transition: none;
+    }
+
+    body {
+        transition: none;
     }
 
     *,

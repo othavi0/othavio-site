@@ -35,46 +35,50 @@ export default function HomePage() {
         {copy.identity}
       </p>
 
-      <section
-        className="reveal-up mt-[clamp(4rem,10vh,6rem)]"
-        style={{ animationDelay: "200ms" }}
-      >
+      <section className="mt-[clamp(4rem,10vh,6rem)]">
         <SectionLabel trailing="2026">{copy.sectionOpenSource}</SectionLabel>
         <div className="mt-6">
-          {projects.map((p) => (
-            <ProjectRow
+          {projects.map((p, index) => (
+            <div
               key={p.name}
-              number={p.number}
-              name={p.name}
-              role={roleLabel[p.role]}
-              description={p.description[lang]}
-              href={p.href}
-            />
+              data-reveal
+              style={
+                { "--reveal-delay": `${index * 60}ms` } as React.CSSProperties
+              }
+            >
+              <ProjectRow
+                number={p.number}
+                name={p.name}
+                role={roleLabel[p.role]}
+                description={p.description[lang]}
+                href={p.href}
+              />
+            </div>
           ))}
         </div>
       </section>
 
-      <section
-        className="reveal-up mt-[clamp(3rem,7vh,4rem)]"
-        style={{ animationDelay: "280ms" }}
-      >
+      <section data-reveal className="mt-[clamp(3rem,7vh,4rem)]">
         <SectionLabel>{copy.sectionWork}</SectionLabel>
         <dl className="mt-6 grid grid-cols-1 gap-x-4 gap-y-2 text-sm sm:grid-cols-[minmax(7rem,9rem)_minmax(0,1fr)] sm:gap-y-3">
           <dt className="text-muted-foreground">{copy.workCurrentlyLabel}</dt>
           <dd className="min-w-0 [overflow-wrap:anywhere] text-foreground">
-            → {copy.workCurrently}
+            <span aria-hidden className="text-accent">
+              →
+            </span>{" "}
+            {copy.workCurrently}
           </dd>
           <dt className="text-muted-foreground">{copy.workPreviouslyLabel}</dt>
           <dd className="min-w-0 [overflow-wrap:anywhere] text-foreground">
-            → {copy.workPreviously}
+            <span aria-hidden className="text-accent">
+              →
+            </span>{" "}
+            {copy.workPreviously}
           </dd>
         </dl>
       </section>
 
-      <section
-        className="reveal-up mt-[clamp(3rem,7vh,4rem)]"
-        style={{ animationDelay: "360ms" }}
-      >
+      <section data-reveal className="mt-[clamp(3rem,7vh,4rem)]">
         <SectionLabel>{copy.sectionElsewhere}</SectionLabel>
         <ul className="mt-6 flex flex-col gap-3 text-sm">
           {elsewhere.map((link) => (
@@ -85,12 +89,13 @@ export default function HomePage() {
                 rel="noreferrer"
                 className="group inline-flex min-h-11 max-w-full items-center gap-3 text-foreground"
               >
-                <span className="min-w-0 [overflow-wrap:anywhere] decoration-accent decoration-2 underline-offset-4 group-hover:underline group-focus-visible:underline">
+                <span className="relative inline-block min-w-0 [overflow-wrap:anywhere]">
                   {link.label}
+                  <span aria-hidden className="underline-sweep" />
                 </span>
                 <span
                   aria-hidden
-                  className="text-muted-foreground transition-[transform,color] duration-200 ease-out group-hover:translate-x-1 group-hover:text-accent group-focus-visible:translate-x-1 group-focus-visible:text-accent"
+                  className="text-muted-foreground transition-[transform,color] duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1.5 group-hover:text-accent group-focus-visible:translate-x-1.5 group-focus-visible:text-accent group-active:translate-x-1.5 group-active:text-accent"
                 >
                   →
                 </span>
