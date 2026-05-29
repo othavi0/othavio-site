@@ -1,39 +1,54 @@
-# Codex adapter
+# Amp / agent adapter
 
-`CLAUDE.md` is the canonical project guide. Read it before editing code or docs:
+`CLAUDE.md` is the canonical project guide. This file exists only to adapt that
+guide for Amp and other agents; do not let it become a second source of truth.
+
+Before editing code or docs, read:
 
 ```bash
 rtk sed -n '1,260p' CLAUDE.md
 ```
 
-If a task depends on global workflow, tooling, communication style, or safety
-rules, also read `/home/othavio/.claude/CLAUDE.md`.
+If a task depends on the user's global workflow, communication style, tooling, or
+safety rules, also read:
 
-## Global setup adapted for Amp
+```bash
+rtk sed -n '1,220p' /home/othavio/.claude/CLAUDE.md
+```
 
-- Respond in Portuguese by default. Keep identifiers, commands, package names,
-  and literal errors in English.
-- Be rigorous: investigate root cause before patching; if using a workaround,
-  say so explicitly. Prefer "não sei" / "não testei" over guessing.
-- For non-trivial work, explore first, outline the approach briefly, then
-  implement. Skip the plan only for obvious typos, renames, or tiny diffs.
-- Parallelize independent reads/searches when useful, but do not run destructive
-  or mutating shell commands in parallel with file edits.
-- Ask only when ambiguity changes the outcome. Use 1-2 focused questions with
-  clear options; otherwise choose from project conventions and continue.
-- Surface relevant adjacent findings briefly, without expanding scope unless the
-  user asks.
-- Never commit, push, force-push, delete data, kill processes, or change shared
-  config irreversibly without explicit approval.
-- Before claiming work is complete, run the narrowest meaningful verification
-  and report what was actually checked. For UI changes, do not call it complete
-  without a real browser/visual check.
-- Use Conventional Commit style in Portuguese when drafting commit messages;
-  keep the subject under 50 characters.
+## Project stack
 
-## Next.js rule
+- Next.js 16.2 App Router, React 19, TypeScript 6, Bun.
+- Tailwind CSS 4 with tokens in `app/globals.css`.
+- shadcn v4 / Base UI conventions from `components.json`.
+- UI composition should reuse `components/ui/*`, `cn()` from `lib/utils.ts`,
+  `lucide-react` icons, and `next-themes`.
 
-This is NOT the Next.js you know. The project uses Next.js 16, whose APIs,
-conventions, and file structure may differ from older training data. Before
-writing Next-specific code, read the relevant guide in
-`node_modules/next/dist/docs/` and heed deprecation notices.
+## Installed project skills
+
+Project skills live in `.agents/skills/` and are tracked by `skills-lock.json`.
+Use them when their trigger matches the task:
+
+- `shadcn` — shadcn components, registries, presets, component docs, and UI
+  composition. For component work, run project-aware shadcn commands with Bun,
+  e.g. `bunx --bun shadcn@latest info --json` and
+  `bunx --bun shadcn@latest docs <component>`.
+- `vercel-react-best-practices` — React/Next.js performance, data fetching,
+  bundle size, RSC serialization, Suspense, and render optimization.
+- `vercel-composition-patterns` — reusable React component APIs, compound
+  components, render props, slots, and avoiding boolean-prop proliferation.
+- `web-design-guidelines` — UI, UX, accessibility, focus, forms, motion,
+  typography, responsive behavior, and dark-mode review.
+
+## Next.js 16 rule
+
+This is NOT the Next.js you know. Before writing Next-specific code, read the
+relevant version-matched docs in `node_modules/next/dist/docs/` and follow
+deprecation notices. Useful starting points:
+
+- App Router: `node_modules/next/dist/docs/01-app/index.md`
+- App guides: `node_modules/next/dist/docs/01-app/02-guides/`
+- Architecture: `node_modules/next/dist/docs/03-architecture/`
+
+The official Next.js agent guidance says this file should redirect agents to the
+bundled docs instead of relying on training data.
