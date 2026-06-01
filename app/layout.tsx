@@ -7,6 +7,13 @@ import { ConsoleSignature } from "@/components/console-signature"
 import { LangProvider } from "@/components/lang-provider"
 import { ScrollOrchestrator } from "@/components/scroll-orchestrator"
 import { ThemeProvider } from "@/components/theme-provider"
+import {
+  siteAliases,
+  siteDescription,
+  siteName,
+  sitePersonJsonLd,
+  siteUrl,
+} from "@/lib/site-metadata"
 import { cn } from "@/lib/utils"
 
 const geistMono = Geist_Mono({
@@ -14,31 +21,69 @@ const geistMono = Geist_Mono({
   variable: "--font-mono",
 })
 
-const description =
-  "Terminal-native tools for developers coordinating AI agents, from Waybar telemetry to Rust token-saving CLIs."
-
 export const metadata: Metadata = {
-  metadataBase: new URL("https://othavio.com"),
+  metadataBase: new URL(siteUrl),
   title: {
-    default: "Othavio Quiliao",
-    template: "%s · Othavio Quiliao",
+    default: siteName,
+    template: `%s · ${siteName}`,
   },
-  description,
+  description: siteDescription,
+  keywords: [
+    ...siteAliases,
+    "Noctua Core",
+    "agent-bar",
+    "AI agents",
+    "developer tools",
+    "terminal tools",
+    "Rust CLI",
+    "Waybar",
+  ],
+  authors: [{ name: siteName, url: siteUrl }],
+  creator: siteName,
+  publisher: siteName,
+  alternates: {
+    canonical: siteUrl,
+  },
   openGraph: {
-    title: "Othavio Quiliao",
-    description,
-    url: "/",
-    siteName: "othavio.com",
+    title: siteName,
+    description: siteDescription,
+    url: siteUrl,
+    siteName,
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: `${siteUrl}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: siteName,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Othavio Quiliao",
-    description,
+    title: siteName,
+    description: siteDescription,
     creator: "@NoctuaCore",
+    images: [
+      {
+        url: `${siteUrl}/opengraph-image`,
+        alt: siteName,
+      },
+    ],
   },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      noimageindex: false,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 }
 
 export default function RootLayout({
@@ -50,6 +95,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={cn(geistMono.variable)}>
       <head>
         <ConsoleSignature />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(sitePersonJsonLd) }}
+        />
       </head>
       <body className="antialiased">
         <ThemeProvider>

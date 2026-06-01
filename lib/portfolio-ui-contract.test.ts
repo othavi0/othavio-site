@@ -2,6 +2,12 @@ import { describe, expect, test } from "bun:test"
 import { readFile } from "node:fs/promises"
 
 import { content } from "./content"
+import {
+  siteAliases,
+  siteDescription,
+  sitePersonJsonLd,
+  siteUrl,
+} from "./site-metadata"
 
 describe("portfolio UI contract", () => {
   test("uses a specific terminal-agent identity across page metadata", async () => {
@@ -14,14 +20,23 @@ describe("portfolio UI contract", () => {
     expect(content.pt.identity).toBe(
       "Cria ferramentas de terminal para devs que coordenam agentes de IA, de telemetria no Waybar a CLIs em Rust que economizam tokens."
     )
-    expect(layout).toContain(
+    expect(siteDescription).toContain(
       "Terminal-native tools for developers coordinating AI agents"
     )
+    expect(layout).toContain("description: siteDescription")
+    expect(ogImage).toContain("siteDescription")
     expect(ogImage).toContain(
-      "Terminal-native tools for developers coordinating AI agents"
+      'import { siteDescription, siteName } from "@/lib/site-metadata"'
     )
     expect(layout).not.toContain("crafting open source tools")
     expect(ogImage).not.toContain("crafting open source tools")
+  })
+
+  test("publishes aliases for personal search discovery", () => {
+    expect(siteAliases).toEqual(["Othavio", "Othavio Quiliao", "Quiliao"])
+    expect(siteDescription).toContain("Othavio Quiliao")
+    expect(siteUrl).toBe("https://othavio.com")
+    expect(sitePersonJsonLd.alternateName).toEqual(["Othavio", "Quiliao"])
   })
 
   test("keeps dark muted text contrast above the documented threshold", async () => {
