@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { usePathname } from "next/navigation"
 
 /**
  * The page's single scroll subscription. Does four jobs from one rAF loop and
@@ -24,6 +25,8 @@ import * as React from "react"
  * it's a state indicator, not decorative motion.
  */
 export function ScrollOrchestrator() {
+  const pathname = usePathname()
+
   React.useEffect(() => {
     const root = document.documentElement
     let raf = 0
@@ -93,8 +96,9 @@ export function ScrollOrchestrator() {
       window.removeEventListener("resize", schedule)
       if (raf) cancelAnimationFrame(raf)
       revealObserver.disconnect()
+      if (lastActive) lastActive.removeAttribute("data-active")
     }
-  }, [])
+  }, [pathname])
 
   return <div aria-hidden className="scroll-progress" />
 }
