@@ -43,18 +43,20 @@ async function gh<T = Record<string, unknown>>(
   variables: Record<string, unknown>,
 ): Promise<T> {
   const token = process.env.GH_README_TOKEN
+  if (!token) throw new Error("GH_README_TOKEN not set on the server")
   const res = await fetch("https://api.github.com/graphql", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: token ? `bearer ${token}` : "",
+      Authorization: `bearer ${token}`,
       "User-Agent": "othavio-site-gh-cards",
     },
     body: JSON.stringify({ query, variables }),
   })
   const json = await res.json()
+  if (json.message) throw new Error(json.message) // auth errors (e.g. "Bad credentials")
   if (json.errors?.length) throw new Error(json.errors[0]?.message ?? "GraphQL error")
-  if (!json.data) throw new Error("No data")
+  if (!json.data) throw new Error(`empty response (HTTP ${res.status})`)
   return json.data as T
 }
 
