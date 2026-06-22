@@ -38,6 +38,17 @@ const esc = (s: unknown) =>
 const fmt = (n: number) =>
   n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, "")}k` : String(n)
 
+// darken a #rrggbb hex by factor f (0..1) for isometric face shading
+const shade = (hex: string, f: number) => {
+  const m = hex.replace("#", "")
+  if (m.length !== 6) return hex
+  const c = (i: number) =>
+    Math.round(parseInt(m.slice(i, i + 2), 16) * f)
+      .toString(16)
+      .padStart(2, "0")
+  return `#${c(0)}${c(2)}${c(4)}`
+}
+
 async function gh<T = Record<string, unknown>>(
   query: string,
   variables: Record<string, unknown>,
@@ -206,43 +217,67 @@ async function langsCard(): Promise<string> {
       totals.set(e.node.name, cur)
     }
   }
-  const sorted = [...totals.entries()].sort((a, b) => b[1].size - a[1].size).slice(0, 8)
-  const sum = sorted.reduce((a, [, v]) => a + v.size, 0) || 1
+  const all = [...totals.entries()].sort((a, b) => b[1].size - a[1].size)
+  const totalAll = all.reduce((a, [, v]) => a + v.size, 0) || 1
+  const top = all.slice(0, 6)
+  const maxPct = (top[0]?.[1].size ?? 1) / totalAll
 
-  const cx = 70
-  const cy = 95
-  const r = 40
-  const circ = 2 * Math.PI * r
-  let offset = 0
-  const arcs = sorted
-    .map(([, v]) => {
-      const frac = v.size / sum
-      const len = circ * frac
-      const seg =
-        `<circle r="${r}" cx="${cx}" cy="${cy}" fill="none" stroke="${v.color}" stroke-width="14" ` +
-        `stroke-dasharray="${len.toFixed(2)} ${(circ - len).toFixed(2)}" stroke-dashoffset="${(-offset).toFixed(2)}" ` +
-        `transform="rotate(-90 ${cx} ${cy})"/>`
-      offset += len
-      return seg
-    })
-    .join("")
+  // isometric 3D columns ("language skyline")
+  const COS = Math.cos(Math.PI / 6)
+  const SIN = Math.sin(Math.PI / 6)
+  const S = 24 // grid scale (px per unit)
+  const MAXH = 92 // tallest column height (px)
+  const OX = 64
+  const OY = 150
+  const W = 0.78 // column footprint width (grid)
+  const D = 0.78 // column footprint depth (grid)
+  const STEP = 1.05 // spacing between columns (grid)
+  const PX = (gx: number, gz: number) => OX + (gx - gz) * COS * S
+  const PY = (gx: number, gz: number, h: number) => OY + (gx + gz) * SIN * S - h
+  const pt = (x: number, z: number, h: number) => `${PX(x, z).toFixed(1)},${PY(x, z, h).toFixed(1)}`
 
-  const legend = sorted
-    .map(([name, v], i) => {
-      const col = i < 4 ? 150 : 290
-      const y = 45 + (i % 4) * 27
-      const pct = ((v.size / sum) * 100).toFixed(1)
+  const columns = top
+    .map(([, v], i) => {
+      const H = Math.max(7, (v.size / totalAll / maxPct) * MAXH)
+      const gx = i * STEP
+      const base = v.color || C.accent
+      const topFace = `${pt(gx, 0, H)} ${pt(gx + W, 0, H)} ${pt(gx + W, D, H)} ${pt(gx, D, H)}`
+      const rightFace = `${pt(gx + W, 0, 0)} ${pt(gx + W, D, 0)} ${pt(gx + W, D, H)} ${pt(gx + W, 0, H)}`
+      const leftFace = `${pt(gx, D, 0)} ${pt(gx + W, D, 0)} ${pt(gx + W, D, H)} ${pt(gx, D, H)}`
+      const oX = PX(gx + W / 2, D / 2)
+      const oY = PY(gx + W / 2, D / 2, 0)
       return (
-        `<circle cx="${col}" cy="${y - 4}" r="5" fill="${v.color}"/>` +
-        `<text x="${col + 12}" y="${y}" class="lbl" font-size="12">${esc(name)} ${pct}%</text>`
+        `<g class="col" style="transform-origin:${oX.toFixed(1)}px ${oY.toFixed(1)}px;animation-delay:${(i * 0.09).toFixed(2)}s">` +
+        `<polygon points="${leftFace}" fill="${shade(base, 0.6)}"/>` +
+        `<polygon points="${rightFace}" fill="${shade(base, 0.8)}"/>` +
+        `<polygon points="${topFace}" fill="${base}"/>` +
+        `</g>`
       )
     })
     .join("")
 
+  const legend = top
+    .map(([name, v], i) => {
+      const y = 56 + i * 24
+      const pct = ((v.size / totalAll) * 100).toFixed(1)
+      return (
+        `<circle cx="300" cy="${y - 4}" r="5" fill="${v.color || C.accent}"/>` +
+        `<text x="314" y="${y}" class="lbl" font-size="12.5">${esc(name)} ${pct}%</text>`
+      )
+    })
+    .join("")
+
+  const style =
+    `<style>.col{animation:grow .8s cubic-bezier(.2,.8,.2,1) backwards;transform-box:view-box}` +
+    `@keyframes grow{from{transform:scaleY(0);opacity:0}to{transform:scaleY(1);opacity:1}}</style>`
+
   return svgWrap(
-    440,
-    175,
-    `<text x="22" y="30" class="t" font-size="16">Most Used Languages</text>` + arcs + legend,
+    480,
+    230,
+    style +
+      `<text x="24" y="30" class="t" font-size="16">Most Used Languages</text>` +
+      columns +
+      legend,
   )
 }
 
