@@ -222,62 +222,98 @@ async function langsCard(): Promise<string> {
   const top = all.slice(0, 6)
   const maxPct = (top[0]?.[1].size ?? 1) / totalAll
 
-  // isometric 3D columns ("language skyline")
+  if (!top.length) return errCard("no language data")
+
+  // isometric 3D columns ("language skyline"), auto-fitted to a bounding box
   const COS = Math.cos(Math.PI / 6)
   const SIN = Math.sin(Math.PI / 6)
-  const S = 24 // grid scale (px per unit)
-  const MAXH = 92 // tallest column height (px)
-  const OX = 64
-  const OY = 150
-  const W = 0.78 // column footprint width (grid)
-  const D = 0.78 // column footprint depth (grid)
-  const STEP = 1.05 // spacing between columns (grid)
-  const PX = (gx: number, gz: number) => OX + (gx - gz) * COS * S
-  const PY = (gx: number, gz: number, h: number) => OY + (gx + gz) * SIN * S - h
-  const pt = (x: number, z: number, h: number) => `${PX(x, z).toFixed(1)},${PY(x, z, h).toFixed(1)}`
+  const S = 26 // grid scale (px per unit)
+  const MAXH = 88 // tallest column height (px)
+  const W = 0.82 // column footprint width (grid)
+  const D = 0.82 // column footprint depth (grid)
+  const STEP = 1.0 // spacing between columns (grid)
+  const PX = (gx: number, gz: number) => (gx - gz) * COS * S
+  const PY = (gx: number, gz: number, h: number) => (gx + gz) * SIN * S - h
 
-  const columns = top
-    .map(([, v], i) => {
-      const H = Math.max(7, (v.size / totalAll / maxPct) * MAXH)
-      const gx = i * STEP
-      const base = v.color || C.accent
-      const topFace = `${pt(gx, 0, H)} ${pt(gx + W, 0, H)} ${pt(gx + W, D, H)} ${pt(gx, D, H)}`
-      const rightFace = `${pt(gx + W, 0, 0)} ${pt(gx + W, D, 0)} ${pt(gx + W, D, H)} ${pt(gx + W, 0, H)}`
-      const leftFace = `${pt(gx, D, 0)} ${pt(gx + W, D, 0)} ${pt(gx + W, D, H)} ${pt(gx, D, H)}`
-      const oX = PX(gx + W / 2, D / 2)
-      const oY = PY(gx + W / 2, D / 2, 0)
-      return (
-        `<g class="col" style="transform-origin:${oX.toFixed(1)}px ${oY.toFixed(1)}px;animation-delay:${(i * 0.09).toFixed(2)}s">` +
-        `<polygon points="${leftFace}" fill="${shade(base, 0.6)}"/>` +
-        `<polygon points="${rightFace}" fill="${shade(base, 0.8)}"/>` +
-        `<polygon points="${topFace}" fill="${base}"/>` +
-        `</g>`
-      )
-    })
-    .join("")
+  const xs: number[] = []
+  const ys: number[] = []
+  const shadows: string[] = []
+  const cols: string[] = []
+  top.forEach(([, v], i) => {
+    const H = Math.max(8, (v.size / totalAll / maxPct) * MAXH)
+    const gx = i * STEP
+    const base = v.color || C.accent
+    const P = (x: number, z: number, h: number) => {
+      const px = PX(x, z)
+      const py = PY(x, z, h)
+      xs.push(px)
+      ys.push(py)
+      return `${px.toFixed(1)},${py.toFixed(1)}`
+    }
+    const top4 = `${P(gx, 0, H)} ${P(gx + W, 0, H)} ${P(gx + W, D, H)} ${P(gx, D, H)}`
+    const right = `${P(gx + W, 0, 0)} ${P(gx + W, D, 0)} ${P(gx + W, D, H)} ${P(gx + W, 0, H)}`
+    const left = `${P(gx, D, 0)} ${P(gx + W, D, 0)} ${P(gx + W, D, H)} ${P(gx, D, H)}`
+    const sx = PX(gx + W / 2, D / 2)
+    const sy = PY(gx + W / 2, D / 2, 0)
+    shadows.push(
+      `<ellipse cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" rx="${(S * 0.62).toFixed(1)}" ry="${(S * 0.3).toFixed(1)}" fill="#000" opacity="0.2"/>`,
+    )
+    cols.push(
+      `<g class="col" style="animation-delay:${(i * 0.08).toFixed(2)}s">` +
+        `<polygon points="${left}" fill="${shade(base, 0.55)}"/>` +
+        `<polygon points="${right}" fill="${shade(base, 0.78)}"/>` +
+        `<polygon points="${top4}" fill="${base}"/>` +
+        `</g>`,
+    )
+  })
 
+  const skyMinX = Math.min(...xs)
+  const skyMaxX = Math.max(...xs)
+  const skyMinY = Math.min(...ys)
+  const skyMaxY = Math.max(...ys)
+
+  // legend to the right, vertically centered to the skyline
+  const rowH = 24
+  const legendH = top.length * rowH
+  const legendX = skyMaxX + 36
+  const legendY0 = skyMinY + (skyMaxY - skyMinY - legendH) / 2 + 16
+  let legendMaxX = legendX
   const legend = top
     .map(([name, v], i) => {
-      const y = 56 + i * 24
-      const pct = ((v.size / totalAll) * 100).toFixed(1)
+      const y = legendY0 + i * rowH
+      const label = `${name} ${((v.size / totalAll) * 100).toFixed(1)}%`
+      legendMaxX = Math.max(legendMaxX, legendX + 16 + label.length * 7.4)
       return (
-        `<circle cx="300" cy="${y - 4}" r="5" fill="${v.color || C.accent}"/>` +
-        `<text x="314" y="${y}" class="lbl" font-size="12.5">${esc(name)} ${pct}%</text>`
+        `<circle cx="${legendX.toFixed(1)}" cy="${(y - 4).toFixed(1)}" r="5.5" fill="${v.color || C.accent}"/>` +
+        `<text x="${(legendX + 15).toFixed(1)}" y="${y.toFixed(1)}" class="lbl" font-size="13">${esc(label)}</text>`
       )
     })
     .join("")
 
+  // fit the canvas to all content + padding (no clipping)
+  const pad = 22
+  const minX = skyMinX
+  const maxX = Math.max(skyMaxX, legendMaxX)
+  const minY = Math.min(skyMinY, legendY0 - 16)
+  const maxY = Math.max(skyMaxY, legendY0 + legendH - rowH + 8)
+  const dx = pad - minX
+  const dy = pad - minY
+  const canvasW = Math.ceil(maxX - minX + pad * 2)
+  const canvasH = Math.ceil(maxY - minY + pad * 2)
+
   const style =
-    `<style>.col{animation:grow .8s cubic-bezier(.2,.8,.2,1) backwards;transform-box:view-box}` +
+    `<style>.col{animation:grow .85s cubic-bezier(.2,.8,.2,1) backwards;transform-box:fill-box;transform-origin:50% 100%}` +
     `@keyframes grow{from{transform:scaleY(0);opacity:0}to{transform:scaleY(1);opacity:1}}</style>`
 
   return svgWrap(
-    480,
-    230,
+    canvasW,
+    canvasH,
     style +
-      `<text x="24" y="30" class="t" font-size="16">Most Used Languages</text>` +
-      columns +
-      legend,
+      `<g transform="translate(${dx.toFixed(1)},${dy.toFixed(1)})">` +
+      shadows.join("") +
+      cols.join("") +
+      legend +
+      `</g>`,
   )
 }
 
