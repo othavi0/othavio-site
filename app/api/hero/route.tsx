@@ -7,7 +7,7 @@
 export const runtime = "edge"
 
 const W = 1200
-const H = 200
+const H = 184
 const BG = "#21252b"
 const INK = "#d7dae0"
 const PERIOD = 380
@@ -65,7 +65,7 @@ export async function GET() {
 <g class="wave">
 <path d="${card}" fill="${BG}"/>
 </g>
-<text class="wm l1" x="${tx}" y="138" font-size="178" textLength="${textLen}" lengthAdjust="spacingAndGlyphs">OTHAVIO</text>
+<text class="wm l1" x="${tx}" y="148" font-size="178" textLength="${textLen}" lengthAdjust="spacingAndGlyphs">OTHAVIO</text>
 </svg>`
 
   return new Response(svg, {
