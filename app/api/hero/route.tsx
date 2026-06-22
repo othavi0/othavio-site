@@ -10,7 +10,6 @@ const W = 1200
 const H = 200
 const BG = "#21252b"
 const INK = "#d7dae0"
-const ACCENT = "#e06c75"
 const PERIOD = 380
 const BASEY = 168
 const AMP = 12
@@ -65,7 +64,6 @@ export async function GET() {
 </style>
 <g class="wave">
 <path d="${card}" fill="${BG}"/>
-<path d="${edge}" fill="none" stroke="${ACCENT}" stroke-width="5"/>
 </g>
 <text class="wm l1" x="${tx}" y="138" font-size="178" textLength="${textLen}" lengthAdjust="spacingAndGlyphs">OTHAVIO</text>
 </svg>`
