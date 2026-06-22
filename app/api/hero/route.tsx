@@ -1,105 +1,61 @@
-// Profile README hero banner (PNG) — mirrors the site's wordmark + identity,
-// rendered in Geist Mono on the One Dark Pro palette. Consumed by othavi0/README.
-
-import { ImageResponse } from "next/og"
+// Profile README hero — full-width animated SVG banner. The wordmark reveals on
+// load (rise + ease-out-expo, second line delayed) and a coral rule draws across
+// the full width. Geist Mono is subset-embedded so it renders identically through
+// GitHub's image proxy. Consumed by othavi0/README (img width=100%).
 
 export const runtime = "edge"
 
-const IDENTITY =
-  "Builds terminal-native tools for developers coordinating AI agents, from Waybar telemetry to Rust token-saving CLIs."
-
-// One Dark Pro
+const W = 1200
+const H = 300
 const BG = "#21252b"
 const INK = "#d7dae0"
-const BODY = "#abb2bf"
-const MUTED = "#5c6370"
 const ACCENT = "#e06c75" // single warm accent (vermillion-equivalent in One Dark)
 
-async function loadGeistMono(weight: number, text: string): Promise<ArrayBuffer> {
+async function geistMonoTTF(weight: number, text: string): Promise<ArrayBuffer> {
   const url = `https://fonts.googleapis.com/css2?family=Geist+Mono:wght@${weight}&text=${encodeURIComponent(text)}`
-  // Old UA forces Google Fonts to serve TTF (Satori/next/og can't parse woff2).
+  // Old UA forces Google Fonts to serve TTF (for the data-URI embed).
   const css = await fetch(url, {
     headers: { "User-Agent": "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)" },
   }).then((r) => r.text())
   const src = css.match(/src:\s*url\((https:\/\/[^)]+)\)/)?.[1]
-  if (!src) throw new Error(`Geist Mono ${weight} not found`)
+  if (!src) throw new Error("Geist Mono not found")
   return fetch(src).then((r) => r.arrayBuffer())
 }
 
+function toBase64(buf: ArrayBuffer): string {
+  const bytes = new Uint8Array(buf)
+  let bin = ""
+  const chunk = 0x8000
+  for (let i = 0; i < bytes.length; i += chunk) {
+    bin += String.fromCharCode(...bytes.subarray(i, i + chunk))
+  }
+  return btoa(bin)
+}
+
 export async function GET() {
-  const [bold, regular] = await Promise.all([
-    loadGeistMono(800, "OTHAVIOQUILIAO"),
-    loadGeistMono(400, `${IDENTITY} GITHUB.COM/OTHAVI0`),
-  ])
+  const font = toBase64(await geistMonoTTF(800, "OTHAVIOQUILIAO"))
 
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          background: BG,
-          color: BODY,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          padding: "60px 64px",
-          fontFamily: "Geist Mono",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            fontSize: 17,
-            letterSpacing: "0.28em",
-            color: MUTED,
-            fontWeight: 400,
-          }}
-        >
-          <span style={{ color: ACCENT, marginRight: 14, fontSize: 19 }}>※</span>
-          GITHUB.COM/OTHAVI0
-        </div>
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" fill="none" role="img" aria-label="OTHAVIO QUILIAO">
+<style>
+@font-face{font-family:'GM';font-weight:800;src:url(data:font/ttf;base64,${font}) format('truetype')}
+.wm{font-family:'GM',ui-monospace,monospace;font-weight:800;letter-spacing:-0.06em;fill:${INK}}
+.l1{animation:rise 1s cubic-bezier(.16,1,.3,1) both}
+.l2{animation:rise 1s cubic-bezier(.16,1,.3,1) .14s both}
+.rule{transform-box:fill-box;transform-origin:left center;animation:draw .9s cubic-bezier(.16,1,.3,1) .5s both}
+@keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+@keyframes draw{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media(prefers-reduced-motion:reduce){.l1,.l2{animation:none;opacity:1}.rule{animation:none;transform:scaleX(1)}}
+</style>
+<rect width="${W}" height="${H}" fill="${BG}"/>
+<text class="wm l1" x="60" y="116" font-size="128">OTHAVIO</text>
+<text class="wm l2" x="60" y="222" font-size="128">QUILIAO</text>
+<rect class="rule" x="64" y="262" width="${W - 128}" height="5" fill="${ACCENT}"/>
+</svg>`
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            fontSize: 112,
-            fontWeight: 800,
-            letterSpacing: "-0.06em",
-            lineHeight: 0.82,
-            color: INK,
-          }}
-        >
-          <span>OTHAVIO</span>
-          <span>QUILIAO</span>
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            fontSize: 22,
-            maxWidth: 940,
-            color: BODY,
-            lineHeight: 1.45,
-            fontWeight: 400,
-          }}
-        >
-          {IDENTITY}
-        </div>
-      </div>
-    ),
-    {
-      width: 1280,
-      height: 420,
-      fonts: [
-        { name: "Geist Mono", data: bold, weight: 800, style: "normal" },
-        { name: "Geist Mono", data: regular, weight: 400, style: "normal" },
-      ],
-      headers: {
-        "Cache-Control": "public, max-age=0, s-maxage=86400, stale-while-revalidate=604800",
-      },
+  return new Response(svg, {
+    headers: {
+      "Content-Type": "image/svg+xml; charset=utf-8",
+      "Cache-Control": "public, max-age=0, s-maxage=86400, stale-while-revalidate=604800",
     },
-  )
+  })
 }
